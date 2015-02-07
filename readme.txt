@@ -2,7 +2,7 @@
 Contributors: northmule
 Donate link: http://www.zixn.ru/
 Tags: woo commerce, woocommerce, ecommerce
-Requires at least: 3.6
+Requires at least: 3.8
 Tested up to: 4.1
 Stable tag: 4.1
 License: GPLv2 or later
