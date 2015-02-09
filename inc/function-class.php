@@ -95,14 +95,14 @@ class BuyFunction {
 
         $article = $product_id; //Код товара по классификации Wordpress (ID продукта)
         $name = $product->get_post_data()->post_title; //Название товара
-        $imageurl = wp_get_attachment_image_src($product->get_image_id())[0]; //Урл картинки товара
+        $imageurl = wp_get_attachment_image_src($product->get_image_id()); //Урл картинки товара
         $amount = $product->get_price(); //Цена товара
         $quantity = '1'; //Количество товаров - не использую
         //Данные о товаре
         $datacart = array(
             'article' => $article,
             'name' => $name,
-            'imageurl' => $imageurl,
+            'imageurl' => $imageurl[0],
             'amount' => $amount,
             'quantity' => $quantity
         );
