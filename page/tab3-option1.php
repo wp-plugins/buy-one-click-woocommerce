@@ -1,5 +1,9 @@
 <h3>Заказы через плагин <?php echo BuyCore::NAME_PLUGIN; ?></h3>
-<p>Все заказы отправленные через кнопку "<?php echo BuyCore::$buyoptions['namebutton']; ?>"</p>
+<p>Все заказы отправленные через кнопку "<?php
+    if (isset(BuyCore::$buyoptions['namebutton'])) {
+        echo BuyCore::$buyoptions['namebutton'];
+    }
+    ?>"</p>
 <?php
 $url_tab = add_query_arg(array('page' => BuyCore::URL_SUB_MENU, 'tab' => 'orders'), 'admin.php');
 ?>
@@ -21,7 +25,7 @@ $url_tab = add_query_arg(array('page' => BuyCore::URL_SUB_MENU, 'tab' => 'orders
         </tr>
     </thead>
     <tbody>
-        <?php foreach (BuyCore::$buyzakaz as $id => $zakaz) { ?>
+<?php foreach (BuyCore::$buyzakaz as $id => $zakaz) { ?>
             <tr class="success order<?php echo $id; ?>">
                 <th><?php echo $id; ?></th>
                 <th><?php echo $zakaz['time']; ?></th>
@@ -54,7 +58,7 @@ $url_tab = add_query_arg(array('page' => BuyCore::URL_SUB_MENU, 'tab' => 'orders
 
                 <th><?php echo '<a class="removeorder" id="' . $id . '" href="' . $url_tab . '#id=' . $id . '"><span class="glyphicon glyphicon-remove-circle"></span></a>'; ?></th>
             </tr>
-        <?php } ?>
+<?php } ?>
     </tbody>
 
 

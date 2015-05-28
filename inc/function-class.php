@@ -12,8 +12,8 @@ class BuyFunction {
     static function viewBuyForm() {
         $cartinfo = self::BuyInfoCart();
         $idtovar = $cartinfo['article']; //Номер товара или страницы WP
-        $nametovar = $cartinfo['name'];// Название товара или title страницы
-        $pricetovar = $cartinfo['amount'];// Цена
+        $nametovar = $cartinfo['name']; // Название товара или title страницы
+        $pricetovar = $cartinfo['amount']; // Цена
         $imagetovar = '<img src="' . $cartinfo['imageurl'] . '" width="80" height="80">'; // Изображение
         ?>
         <div class="overlay" title="окно"></div>
@@ -72,7 +72,7 @@ class BuyFunction {
      * HTML форма кнопки "Заказать в один клик"
      */
     static function viewBuyButton() {
-        if (!empty(BuyCore::$buyoptions['namebutton']) and !empty(BuyCore::$buyoptions['positionbutton'])) {
+        if (!empty(BuyCore::$buyoptions['namebutton']) and ! empty(BuyCore::$buyoptions['positionbutton'])) {
             ?>
 
             <a class="clickBuyButton button21" href="#"><?php echo BuyCore::$buyoptions['namebutton']; ?></a>
@@ -90,24 +90,30 @@ class BuyFunction {
      */
     static function BuyInfoCart() {
         global $post; // Что бы получать данные о посте Wordpress
+
         $product_id = $post->ID; //ID продукта (ID поста Wordpress)
         $product = new WC_Product($product_id); // Класс Woo для работы с товаром
+        if (method_exists($product, 'get_image_id')) {
 
-        $article = $product_id; //Код товара по классификации Wordpress (ID продукта)
-        $name = $product->get_post_data()->post_title; //Название товара
-        $imageurl = wp_get_attachment_image_src($product->get_image_id()); //Урл картинки товара
-        $amount = $product->get_price(); //Цена товара
-        $quantity = '1'; //Количество товаров - не использую
-        //Данные о товаре
-        $datacart = array(
-            'article' => $article,
-            'name' => $name,
-            'imageurl' => $imageurl[0],
-            'amount' => $amount,
-            'quantity' => $quantity
-        );
 
-        return $datacart;
+            $article = $product_id; //Код товара по классификации Wordpress (ID продукта)
+            $name = $product->get_post_data()->post_title; //Название товара
+            $imageurl = wp_get_attachment_image_src($product->get_image_id()); //Урл картинки товара
+            $amount = $product->get_price(); //Цена товара
+            $quantity = '1'; //Количество товаров - не использую
+            //Данные о товаре
+            $datacart = array(
+                'article' => $article,
+                'name' => $name,
+                'imageurl' => $imageurl[0],
+                'amount' => $amount,
+                'quantity' => $quantity
+            );
+
+            return $datacart;
+        } else {
+            return FALSE;
+        }
     }
 
     /**
@@ -125,7 +131,7 @@ class BuyFunction {
         $headers .= "Content-type: text/html; charset=UTF-8 \r\n";
         $headers .= "From: " . $namemag . " <" . BuyCore::$buynotification['emailfrom'] . ">\r\n";
 //Функция Wordpress иногда ломается, можно использовать просто mail
-       wp_mail($to, $subject, self::htmlEmailTemplate($namemag, $date, $urltovar, $price, $nametovar, $dopinfo), $headers);
+        wp_mail($to, $subject, self::htmlEmailTemplate($namemag, $date, $urltovar, $price, $nametovar, $dopinfo), $headers);
     }
 
     /**

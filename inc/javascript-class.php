@@ -45,6 +45,16 @@ class BuyJavaScript {
         $infotovar_temp = array('time' => $time, 'idtovar' => $idtovar, 'txtname' => $txtname, 'txtphone' => $txtphone,
             'txtemail' => $txtemail, 'nametovar' => $nametovar, 'pricetovar' => $pricetovar, 'message' => $message, 'status' => $status, 'linktovar' => $linktovar
         );
+        if (isset(BuyCore::$buynotification['namemag'])) {
+            $namemag = BuyCore::$buynotification['namemag'];
+        } else {
+            $namemag = '';
+        }
+        if (isset(BuyCore::$buynotification['dopiczakaz'])) {
+            $dopiczakaz = BuyCore::$buynotification['dopiczakaz'];
+        } else {
+            $dopiczakaz = '';
+        }
 
 
         $infotovar_new = $infotovar_old;
@@ -56,10 +66,10 @@ class BuyJavaScript {
             'url' => '<a href="' . get_the_permalink($idtovar) . '" target="_blank">Посмотреть</a>',
             'price' => $pricetovar,
             'nametov' => $nametovar,
-            'namemag' => BuyCore::$buynotification['namemag'],
-            'dopinfo' => BuyCore::$buynotification['dopiczakaz']
+            'namemag' => $namemag,
+            'dopinfo' => $dopiczakaz
         );
-        if (!empty($txtemail) and !empty(BuyCore::$buynotification['infozakaz_chek'])) {
+        if (!empty($txtemail) and ! empty(BuyCore::$buynotification['infozakaz_chek'])) {
 
             BuyFunction::BuyEmailNotification($txtemail, BuyCore::$buynotification['namemag'], $message);
         }

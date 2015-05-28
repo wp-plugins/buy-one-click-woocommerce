@@ -33,6 +33,11 @@ class BuyCore {
     const OPTIONS_NAME_PAGE = 'page/option1.php';
 
     /**
+     * Имя индексного файла
+     */
+    const INDEX_NAME_FILE = 'buycli-index.php';
+
+    /**
      * Настройки плагина
      * @uses [namebutton] - Название кнопки "купить"
      * @uses [positionbutton]- Расположение кнопк "купить"
@@ -59,7 +64,7 @@ class BuyCore {
      * @uses [infozakaz_chek] - Отправка клиенту сообщения о заказе
      * @uses [dopiczakaz_chek] - Отправка клиенту доп сообщения
      * @uses [dopiczakaz] - Дополнительная информация
-       */
+     */
     static $buynotification;
 
     /**
@@ -94,13 +99,19 @@ class BuyCore {
     public function addAction() {
 
         $buyoptions = get_option('buyoptions');
-        $position = $buyoptions['positionbutton']; //Позиция кнопки
+        if (isset($buyoptions['positionbutton'])) {
+            $position = $buyoptions['positionbutton']; //Позиция кнопки
+
+            add_action($position, array($this, 'styleAddFrontPage')); //Стили фронта
+            add_action($position, array($this, 'scriptAddFrontPage')); //Скрипты фронта
+            add_action($position, array('BuyFunction', 'viewBuyButton')); //Кнопка заказать
+            add_action($position, array('BuyFunction', 'viewBuyForm')); //Форма заказа
+        }
         add_action('admin_menu', array($this, 'adminOptions'));
-        add_action($position, array($this, 'styleAddFrontPage')); //Стили фронта
-        add_action($position, array($this, 'scriptAddFrontPage')); //Скрипты фронта
-        add_action($position, array('BuyFunction', 'viewBuyButton')); //Кнопка заказать
-        add_action($position, array('BuyFunction', 'viewBuyForm')); //Форма заказа
         add_action('woocommerce_receipt_buyclik', array('BuyFunction', 'viewBuyForm')); // Подтверждение заказа
+
+
+        add_filter('plugin_action_links', array($this, 'pluginLinkSetting'), 10, 2); //Настройка на странице плагинов
     }
 
     /**
@@ -202,21 +213,36 @@ class BuyCore {
      * @result include_once tab{номер вкладки}-option1.php
      */
     static public function tabViwer() {
-        $tab = $_GET['tab'];
-        switch ($tab) {
-            case 'notification':
-                include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab2-option1.php';
-                break;
-            case 'orders':
-                include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab3-option1.php';
-                break;
-            case 'help':
-                include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab4-option1.php';
-                break;
-            default :
-                include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab1-option1.php';
-           
+        if (isset($_GET['tab'])) {
+            $tab = $_GET['tab'];
+            switch ($tab) {
+                case 'notification':
+                    include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab2-option1.php';
+                    break;
+                case 'orders':
+                    include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab3-option1.php';
+                    break;
+                case 'help':
+                    include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab4-option1.php';
+                    break;
+                default :
+                    include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab1-option1.php';
+            }
+        } else {
+            include_once WP_PLUGIN_DIR . '/' . self::PATCH_PLUGIN . '/page/tab1-option1.php';
         }
+    }
+
+    /**
+     * Добавляет пункт настроек на странице активированных плагинов
+     */
+    public function pluginLinkSetting($links, $file) {
+        $this_plugin = self::PATCH_PLUGIN . '/' . self::INDEX_NAME_FILE;
+        if ($file == $this_plugin) {
+            $settings_link1 = '<a href="admin.php?page=' . self::URL_SUB_MENU . '">' . __("Settings", "default") . '</a>';
+            array_unshift($links, $settings_link1);
+        }
+        return $links;
     }
 
 }

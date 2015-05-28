@@ -11,21 +11,33 @@ $buynotification = get_option('buynotification');
         <tr valign="top">
             <th scope="row">Имя от кого</th>
             <td>
-                <input type="text" name="buynotification[namemag]" value="<?php echo $buynotification['namemag']; ?>" />
+                <input type="text" name="buynotification[namemag]" value="<?php
+                if (isset($buynotification['namemag'])) {
+                    echo $buynotification['namemag'];
+                }
+                ?>" />
                 <span class="description">Например "<?php bloginfo('name'); ?>"</span>
             </td>
         </tr>
         <tr valign="top">
             <th scope="row">Email От кого</th>
             <td>
-                <input type="text" name="buynotification[emailfrom]" value="<?php echo $buynotification['emailfrom']; ?>" />
+                <input type="text" name="buynotification[emailfrom]" value="<?php
+                if (isset($buynotification['emailfrom'])) {
+                    echo $buynotification['emailfrom'];
+                }
+                ?>" />
                 <span class="description">Например "izm@zixn.ru" </span>
             </td>
         </tr>
         <tr valign="top">
             <th scope="row">Копия на email</th>
             <td>
-                <input type="text" name="buynotification[emailbbc]" value="<?php echo $buynotification['emailbbc']; ?>" />
+                <input type="text" name="buynotification[emailbbc]" value="<?php
+                if (isset($buynotification['emailbbc'])) {
+                    echo $buynotification['emailbbc'];
+                }
+                ?>" />
                 <span class="description">На этот email будут приходить копии сообщений о заказе. Через знак "," можно указывать несколько Email. Пример:
                     shop@mail.ru, jora@mail.ru, obama@google.com</span>
             </td>
@@ -41,15 +53,23 @@ $buynotification = get_option('buynotification');
         <tr valign="top">
             <th scope="row">Информацию о заказе</th>
             <td>
-                <input type="checkbox" name="buynotification[infozakaz_chek]" <?php checked($buynotification['infozakaz_chek'], 'on', 1); ?>/>
+                <input type="checkbox" name="buynotification[infozakaz_chek]" <?php
+                if (isset($buynotification['infozakaz_chek'])) {
+                    checked($buynotification['infozakaz_chek'], 'on', 1);
+                }
+                ?>/>
                 <span class="description">Отправлять клиенту данные о заказе. Галочка стоит - отправлять!</span>
             </td>
         </tr>
-        
+
         <tr valign="top">
             <th scope="row">Произвольная информация</th>
             <td>
-                <input type="checkbox" name="buynotification[dopiczakaz_chek]" <?php checked($buynotification['dopiczakaz_chek'], 'on', 1); ?>/>
+                <input type="checkbox" name="buynotification[dopiczakaz_chek]" <?php
+                if (isset($buynotification['dopiczakaz_chek'])) {
+                    checked($buynotification['dopiczakaz_chek'], 'on', 1);
+                }
+                ?>/>
                 <span class="description">Отправлять дополнительные данные. Вы можете указать произвольный текст.</span>
             </td>
         </tr>
@@ -58,7 +78,11 @@ $buynotification = get_option('buynotification');
         <tr valign="top">
             <th scope="row">Произвольная информация</th>
             <td>
-                <textarea cols="100" rows="10" name="buynotification[dopiczakaz]"><?php echo $buynotification['dopiczakaz']; ?></textarea>
+                <textarea cols="100" rows="10" name="buynotification[dopiczakaz]"><?php
+                if (isset($buynotification['dopiczakaz'])) {
+                    echo $buynotification['dopiczakaz'];
+                }
+                ?></textarea>
                 <span class="description">Произвольная информация, например контакты или пожелание. Есть возможность указывать HTML тэги</span>
             </td>
         </tr>
