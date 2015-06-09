@@ -17,3 +17,8 @@ echo '<pre>';
 print_r(BuyCore::$buynotification);
 echo '</pre>'
 ?>
+<p>Для изменения внешнего вида формы быстрого заказ нужно править файлы</p>
+1)"css/button21.css"<br>
+2)"css/form.css"<br>
+<p>Для изменения окна дополнительного сообщения нужно править файл</p>
+1)"css/formmessage.css"<br>

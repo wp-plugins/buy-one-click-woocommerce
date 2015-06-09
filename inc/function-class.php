@@ -7,6 +7,19 @@
 class BuyFunction {
 
     /**
+     * Дополнительное сообщение
+     */
+    static function viewBuyMessage() {
+        ?>
+        <div class = "overlay_message" title = "Уведомление"></div>
+        <div class = "popummessage">
+            <div class="close_message">x</div>
+            <?php echo BuyCore::$buyoptions['success_action_message']; ?>
+        </div>
+        <?php
+    }
+
+    /**
      * Форма для быстрого заказа
      */
     static function viewBuyForm() {
@@ -19,7 +32,7 @@ class BuyFunction {
         <div class="overlay" title="окно"></div>
         <div class="popup">
             <div class="close_order">x</div>
-            <form method="post" action="#" id="contactform">
+            <form class="b1c-form" method="post" action="#" id="contactform">
                 <h2><?php echo BuyCore::$buyoptions['namebutton']; ?></h2>
                 <?php if (!empty(BuyCore::$buyoptions['infotovar_chek'])) { ?>
                     <table>
@@ -45,18 +58,38 @@ class BuyFunction {
                 <?php } ?>
 
                 <?php if (!empty(BuyCore::$buyoptions['fio_chek'])) { ?>
-                    <input type="text" required="" placeholder="<?php echo BuyCore::$buyoptions['fio_descript']; ?>" name="txtname">	
-                <?php } ?>
-                <?php if (!empty(BuyCore::$buyoptions['fon_chek'])) { ?>
-                    <input type="tel" pattern="^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$" required="" placeholder="<?php echo BuyCore::$buyoptions['fon_descript']; ?>" name="txtphone">
-                    <p class="phoneFormat">формат +7 XXX XXX XX XX</p>
+                    <input class="buyvalide" type="text" <?php
+                    if (!empty(BuyCore::$buyoptions['fio_verifi'])) {
+                        echo 'required';
+                    }
+                    ?> placeholder="<?php echo BuyCore::$buyoptions['fio_descript']; ?>" name="txtname">	
+                       <?php } ?>
+                       <?php if (!empty(BuyCore::$buyoptions['fon_chek'])) { ?>
+                    <input class="buyvalide" type="tel" pattern="^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$" <?php
+                    if (!empty(BuyCore::$buyoptions['fon_verifi'])) {
+                        echo 'required';
+                    }
+                    ?> placeholder="<?php echo BuyCore::$buyoptions['fon_descript']; ?>" name="txtphone">
+                    <p class="phoneFormat"><?php
+                        if (!empty(BuyCore::$buyoptions['fon_format'])) {
+                            echo 'Формат ' . BuyCore::$buyoptions['fon_format'];
+                        }
+                        ?></p>
                 <?php } ?>
                 <?php if (!empty(BuyCore::$buyoptions['email_chek'])) { ?>
-                    <input type="email" placeholder="<?php echo BuyCore::$buyoptions['email_descript']; ?>" name="txtemail">
-                <?php } ?>
-                <?php if (!empty(BuyCore::$buyoptions['dopik_chek'])) { ?>
-                    <textarea class="buymessage" name="message" placeholder="<?php echo BuyCore::$buyoptions['dopik_descript']; ?>" rows="10" value=""></textarea>
-                <?php } ?>
+                    <input class="buyvalide" type="email" <?php
+                    if (!empty(BuyCore::$buyoptions['email_verifi'])) {
+                        echo 'required';
+                    }
+                    ?> placeholder="<?php echo BuyCore::$buyoptions['email_descript']; ?>" name="txtemail">
+                       <?php } ?>
+                       <?php if (!empty(BuyCore::$buyoptions['dopik_chek'])) { ?>
+                    <textarea class="buymessage buyvalide" <?php
+                    if (!empty(BuyCore::$buyoptions['dopik_verifi'])) {
+                        echo 'required';
+                    }
+                    ?> name="message" placeholder="<?php echo BuyCore::$buyoptions['dopik_descript']; ?>" rows="10" value=""></textarea>
+                          <?php } ?>
 
                 <input type="hidden" name="buy_nametovar" value="<?php echo $nametovar; ?>" />
                 <input type="hidden" name="buy_pricetovar" value="<?php echo $pricetovar; ?>" />
@@ -127,17 +160,19 @@ class BuyFunction {
         $price = $message['price'];
         $nametovar = $message['nametov'];
         $dopinfo = $message['dopinfo'];
+        $fon = $message['fon'];
+        $fio = $message['fio'];
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= "Content-type: text/html; charset=UTF-8 \r\n";
         $headers .= "From: " . $namemag . " <" . BuyCore::$buynotification['emailfrom'] . ">\r\n";
 //Функция Wordpress иногда ломается, можно использовать просто mail
-        wp_mail($to, $subject, self::htmlEmailTemplate($namemag, $date, $urltovar, $price, $nametovar, $dopinfo), $headers);
+        wp_mail($to, $subject, self::htmlEmailTemplate($namemag, $date, $urltovar, $price, $nametovar, $dopinfo, $fon, $fio), $headers);
     }
 
     /**
      * Шаблон emial сообщения
      */
-    static function htmlEmailTemplate($namemag, $date, $urltovar, $price, $nametovar, $dopinfo) {
+    static function htmlEmailTemplate($namemag, $date, $urltovar, $price, $nametovar, $dopinfo, $fon, $fio) {
         $message = ' 
 <table style="height: 255px; border-color: #1b0dd9;" border="2" width="579">
 <tbody>
@@ -159,6 +194,14 @@ class BuyFunction {
 <tr>
 <td style="border-color: #132cba; text-align: center; vertical-align: middle;">Наименование</td>
 <td style="border-color: #132cba; text-align: center; vertical-align: middle;">' . $nametovar . '</td>
+</tr>
+<tr>
+<td style="border-color: #132cba; text-align: center; vertical-align: middle;">Телефон</td>
+<td style="border-color: #132cba; text-align: center; vertical-align: middle;">' . $fon . '</td>
+</tr>
+<tr>
+<td style="border-color: #132cba; text-align: center; vertical-align: middle;">ФИО</td>
+<td style="border-color: #132cba; text-align: center; vertical-align: middle;">' . $fio . '</td>
 </tr>
 <tr>
 <td style="border-color: #132cba; text-align: center; vertical-align: middle;"> ----- </td>

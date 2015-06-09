@@ -7,6 +7,17 @@ $buyoptions = get_option('buyoptions'); //Массив настроек
 <form method="post" action="options.php">
     <?php wp_nonce_field('update-options'); ?>
     <table class="form-table">
+        <tr valign="top">
+            <th scope="row">Включить показ кнопки?</th>
+            <td>
+                <input type="checkbox" name="buyoptions[enable_button]" <?php
+                if (isset($buyoptions['enable_button'])) {
+                    checked($buyoptions['enable_button'], 'on', 1);
+                }
+                ?>/>
+                <span class="description">Включить или отключить отображение кнопки быстрого заказа на сайте. Галочка стоит - кнопка показывается</span>
+            </td>
+        </tr>
 
         <tr valign="top">
             <th scope="row">Название кнопки на сайте</th>
@@ -133,6 +144,15 @@ $buyoptions = get_option('buyoptions'); //Массив настроек
                 ?>" />
                 <span class="description">Например "Ваше имя?"</span>
             </td>
+            <th scope="row">Обязательное поле?</th>
+            <td>
+                <input type="checkbox" name="buyoptions[fio_verifi]" <?php
+                if (isset($buyoptions['fio_verifi'])) {
+                    checked($buyoptions['fio_verifi'], 'on', 1);
+                }
+                ?>/>
+
+            </td>
         </tr>
         <tr valign="top">
             <th scope="row">Поле телефон</th>
@@ -143,6 +163,25 @@ $buyoptions = get_option('buyoptions'); //Массив настроек
                 }
                 ?>" />
                 <span class="description">Например "Ваш телефон?"</span>
+            </td>
+            <th scope="row">Обязательное поле?</th>
+            <td>
+                <input type="checkbox" name="buyoptions[fon_verifi]" <?php
+                if (isset($buyoptions['fon_verifi'])) {
+                    checked($buyoptions['fon_verifi'], 'on', 1);
+                }
+                ?>/>
+
+            </td>
+            <th scope="row">Подсказка формата</th>
+            <td>
+                <input type="input" name="buyoptions[fon_format]" value="<?php
+                if (isset($buyoptions['fon_format'])) {
+                    echo $buyoptions['fon_format'];
+                }
+                ?>" />
+                <span class="description">Например "+7 XXX XXX XX XX"</span>
+
             </td>
         </tr>
         <tr valign="top">
@@ -155,6 +194,15 @@ $buyoptions = get_option('buyoptions'); //Массив настроек
                 ?>" />
                 <span class="description">Например "Ваш email?"</span>
             </td>
+            <th scope="row">Обязательное поле?</th>
+            <td>
+                <input type="checkbox" name="buyoptions[email_verifi]" <?php
+                if (isset($buyoptions['email_verifi'])) {
+                    checked($buyoptions['email_verifi'], 'on', 1);
+                }
+                ?>/>
+
+            </td>
         </tr>
         <tr valign="top">
             <th scope="row">Поле "Дополнительно"</th>
@@ -165,6 +213,15 @@ $buyoptions = get_option('buyoptions'); //Массив настроек
                 }
                 ?>" />
                 <span class="description">Например "Адрес доставки"</span>
+            </td>
+            <th scope="row">Обязательное поле?</th>
+            <td>
+                <input type="checkbox" name="buyoptions[dopik_verifi]" <?php
+                if (isset($buyoptions['dopik_verifi'])) {
+                    checked($buyoptions['dopik_verifi'], 'on', 1);
+                }
+                ?>/>
+
             </td>
         </tr>
         <tr valign="top">
@@ -177,6 +234,7 @@ $buyoptions = get_option('buyoptions'); //Массив настроек
                 ?>" />
                 <span class="description">Например "Заказать"</span>
             </td>
+
         </tr>
         <tr valign="top">
             <th scope="row">Сообщение в форме</th>
@@ -187,6 +245,35 @@ $buyoptions = get_option('buyoptions'); //Массив настроек
                 }
                 ?>" />
                 <span class="description">Сообщение об успешном оформление заказа. Например: "Спасибо за заказ!". Сообщение появляется в форме заказа «В один клик», после того как пользователь нажал кнопку подтверждения заказа. Сообщение должно быть коротким.</span>
+            </td>
+        </tr>
+        <tr valign="top">
+            <th scope="row">Что делать после нажатия кнопки <?php
+                if (isset($buyoptions['butform_descript'])) {
+                    echo $buyoptions['butform_descript'];
+                }
+                ?></th>
+            <td>
+                <p><input name="buyoptions[success_action]" type="radio" value="1" <?php checked($buyoptions['success_action'], '1', 1); ?>> Ни чего не делать</p><span class="description">Окно останется открытым, пользователь увидит сообщение указанное выше</span>
+                <p><input name="buyoptions[success_action]" type="radio" value="2" <?php checked($buyoptions['success_action'], '2', 1); ?>> Закрыть через <input type="text" name="buyoptions[success_action_close]" maxlength="6" pattern="[0-9]*" size="5"  value="<?php
+                    if (isset($buyoptions['success_action_close'])) {
+                        echo $buyoptions['success_action_close'];
+                    }
+                    ?>" />мсек.</p><span class="description">Например: "2000". Пользователь увидит сообщение указанное выше и форма будет закрыта через указанное время</span>
+                <p><input name="buyoptions[success_action]" type="radio" value="3" <?php checked($buyoptions['success_action'], '3', 1); ?>> Показать сообщение(возможен html)</p>  <textarea cols="20" rows="4" name="buyoptions[success_action_message]"><?php
+                    if (isset($buyoptions['success_action_message'])) {
+                        echo $buyoptions['success_action_message'];
+                    }
+                    ?></textarea>
+                <p><input name="buyoptions[success_action]" type="radio" value="4" <?php checked($buyoptions['success_action'], '4', 1); ?>> Сделать редирект на страницу <input type="text" name="buyoptions[success_action_redirect]" value="<?php
+                    if (isset($buyoptions['success_action_redirect'])) {
+                        echo $buyoptions['success_action_redirect'];
+                    }
+                    ?>" />
+
+
+                </p><span class="description">Например: <a href="http://zixn.ru">"http://zixn.ru"</a>. Пользователь увидит сообщение и  попадёт на указанную страницу</span>
+
             </td>
         </tr>
     </table>

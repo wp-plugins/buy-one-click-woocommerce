@@ -4,12 +4,12 @@
   Plugin Name: Buy one click WooCommerce
   Plugin URI: http://www.zixn.ru/
   Description: Дополнение для Woocommerce - Купить в один клик. Добавляет кнопку "Заказать в один клик" в карточку товара.
-  Version: 1.0
+  Version: 1.1
   Author: Djon
   Author URI: http://zixn.ru
  */
 
-/*  Copyright 2015  Djon  (email: izm@zixn.ru)
+/*  Copyright 2015  Djo  (email: izm@zixn.ru)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

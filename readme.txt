@@ -3,8 +3,8 @@ Contributors: northmule
 Donate link: http://www.zixn.ru/
 Tags: woo commerce, woocommerce, ecommerce
 Requires at least: 3.8
-Tested up to: 4.1
-Stable tag: 4.1
+Tested up to: 4.2
+Stable tag: 4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 == Changelog ==
+= 1.1 =
+* Исправлены некоторые ошибки в работе плагина
+* Добавлена опция включения/отключения показа кнопки
+* Добавлены опции «обязательные поля»
+* Добавлены варианты поведения формы при отправке заказа
+* В Шаблон email сообщения добавлены ФИО и Телефон клиента
 = 1.0 =
 * Релиз
 

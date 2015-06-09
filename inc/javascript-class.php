@@ -31,8 +31,17 @@ class BuyJavaScript {
 
         $textjson = $_POST['text'];
 
-        $txtname = wp_specialchars_decode(esc_html($textjson['txtname']), ENT_QUOTES);
-        $txtphone = $textjson['txtphone'];
+        if (!empty($textjson['txtname'])) {
+            $txtname = wp_specialchars_decode(esc_html($textjson['txtname']), ENT_QUOTES);
+        } else {
+            $txtname = '';
+        }
+        if (!empty($textjson['txtphone'])) {
+            $txtphone = $textjson['txtphone'];
+        } else {
+            $txtphone = '';
+        }
+
         $txtemail = sanitize_email($textjson['txtemail']);
         $nametovar = $textjson['nametovar'];
         $pricetovar = $textjson['pricetovar'];
@@ -55,6 +64,34 @@ class BuyJavaScript {
         } else {
             $dopiczakaz = '';
         }
+        if (isset(BuyCore::$buyoptions['success_action'])) { // опции "действия после нажатия кнопки в форме"
+            if (!empty(BuyCore::$buyoptions['success_action_close'])) {
+                $success_time = BuyCore::$buyoptions['success_action_close']; // 2 Закрытие формы через мсек
+            }
+            if (!empty(BuyCore::$buyoptions['success_action_message'])) {
+                $success_message = BuyCore::$buyoptions['success_action_message']; // 3 Сообщение после нажатия кнопки в форме
+            }
+            if (!empty(BuyCore::$buyoptions['success_action_redirect'])) {
+                $success_redirect = BuyCore::$buyoptions['success_action_redirect']; // 4  Редирект на страницу после нажатия на кнопку в форме
+            }
+            switch (BuyCore::$buyoptions['success_action']) {
+                case 1: $success_action = 'no'; //Ни чего не делать, пользователь сам закроет форму
+                    $num = 1;
+                    break;
+                case 2: $success_action = $success_time;
+                    $num = 2;
+                    break;
+                case 3: $success_action = $success_message;
+                    $num = 3;
+                    break;
+                case 4: $success_action = $success_redirect;
+                    $num = 4;
+                    break;
+                default: $success_action = 'no';
+                    $num = 2; //Ни чего не делать, пользователь сам закроет форму
+            }
+        } //конец IF действий после нажатия кнопки в форме
+
 
 
         $infotovar_new = $infotovar_old;
@@ -67,7 +104,9 @@ class BuyJavaScript {
             'price' => $pricetovar,
             'nametov' => $nametovar,
             'namemag' => $namemag,
-            'dopinfo' => $dopiczakaz
+            'dopinfo' => $dopiczakaz,
+            'fon' => $txtphone,
+            'fio' => $txtname
         );
         if (!empty($txtemail) and ! empty(BuyCore::$buynotification['infozakaz_chek'])) {
 
@@ -76,8 +115,10 @@ class BuyJavaScript {
         if (!empty(BuyCore::$buynotification['emailbbc'])) {
             BuyFunction::BuyEmailNotification(BuyCore::$buynotification['emailbbc'], BuyCore::$buynotification['namemag'], $message);
         }
-        echo '<strong>' . BuyCore::$buyoptions['success'] . '</strong>';
-
+        $returnresult = array('result' => BuyCore::$buyoptions['success'], 'num' => $num, 'action' => $success_action);
+        //$returnresult = array('result' => '123');
+//echo '<strong>' . BuyCore::$buyoptions['success'] . '</strong>';
+        echo json_encode($returnresult);
         wp_die();
     }
 

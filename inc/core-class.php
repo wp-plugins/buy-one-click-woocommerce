@@ -39,6 +39,7 @@ class BuyCore {
 
     /**
      * Настройки плагина
+     * @uses [enable_button] - Включатель кнопки
      * @uses [namebutton] - Название кнопки "купить"
      * @uses [positionbutton]- Расположение кнопк "купить"
      * @uses [infotovar_chek] - Показывать или нет информацию о товаре в окне
@@ -53,6 +54,16 @@ class BuyCore {
      * @uses [butform_descript] - Название кнопки в форме отправки данных о покупателе
      * @uses [infotovar_chek] - Показывать или нет информацию о товаре в окне
      * @uses [success] - Сообщение об успешном совершение заказа в форме
+     * @uses [fio_verifi] - Обязательно поле ФИО
+     * @uses [fon_verifi] - Обязательно поле ФИО
+     * @uses [fon_format] - Формат телефона
+     * @uses [email_verifi] - Обязательно поле ФИО
+     * @uses [dopik_verifi] - Обязательно поле ФИО
+     * @uses [success_action] - radio действия после закрытия
+     * @uses [success_action_close] - Время в мс до закрытия формы заказа
+     * @uses [success_action_message] - Сообщение после заказа
+     * @uses [success_action_redirect] - URL редиректа после заказа
+     * 
      */
     static $buyoptions;
 
@@ -99,16 +110,17 @@ class BuyCore {
     public function addAction() {
 
         $buyoptions = get_option('buyoptions');
-        if (isset($buyoptions['positionbutton'])) {
+        if (!empty($buyoptions['enable_button']) and $buyoptions['enable_button'] == 'on') {
             $position = $buyoptions['positionbutton']; //Позиция кнопки
 
             add_action($position, array($this, 'styleAddFrontPage')); //Стили фронта
             add_action($position, array($this, 'scriptAddFrontPage')); //Скрипты фронта
             add_action($position, array('BuyFunction', 'viewBuyButton')); //Кнопка заказать
             add_action($position, array('BuyFunction', 'viewBuyForm')); //Форма заказа
+            add_action($position, array('BuyFunction', 'viewBuyMessage')); //Дополнительное сообщение
         }
         add_action('admin_menu', array($this, 'adminOptions'));
-        add_action('woocommerce_receipt_buyclik', array('BuyFunction', 'viewBuyForm')); // Подтверждение заказа
+        //add_action('woocommerce_receipt_buyclik', array('BuyFunction', 'viewBuyForm')); // Подтверждение заказа
 
 
         add_filter('plugin_action_links', array($this, 'pluginLinkSetting'), 10, 2); //Настройка на странице плагинов
@@ -172,6 +184,8 @@ class BuyCore {
         wp_enqueue_style('buyonclickfrontcss');
         wp_register_style('buyonclickcss2', plugins_url() . '/' . self::PATCH_PLUGIN . '/' . 'css/form.css');
         wp_enqueue_style('buyonclickcss2');
+        wp_register_style('buyonclickfrontcss3', plugins_url() . '/' . self::PATCH_PLUGIN . '/' . 'css/formmessage.css');
+        wp_enqueue_style('buyonclickfrontcss3');
     }
 
     /**
