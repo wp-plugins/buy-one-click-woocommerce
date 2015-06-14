@@ -5,6 +5,10 @@
     }
     ?>"</p>
 <?php
+
+?>
+<input type="button" class="btn btn-default btn-sm removeallorder" value="Удалить историю"/>
+<?php
 $url_tab = add_query_arg(array('page' => BuyCore::URL_SUB_MENU, 'tab' => 'orders'), 'admin.php');
 ?>
 <table class="table table-bordered table-hover table-condensed">
@@ -20,6 +24,7 @@ $url_tab = add_query_arg(array('page' => BuyCore::URL_SUB_MENU, 'tab' => 'orders
             <th>Цена</th>
             <th>Сообщение</th>
             <th>Товар</th>
+            <th>СМС</th>
             <th>Статус</th>
             <th>Удалить</th>
         </tr>
@@ -37,6 +42,7 @@ $url_tab = add_query_arg(array('page' => BuyCore::URL_SUB_MENU, 'tab' => 'orders
                 <th><?php echo $zakaz['pricetovar']; ?></th>
                 <th><?php echo $zakaz['message']; ?></th>
                 <th><?php echo $zakaz['linktovar']; ?></th>
+                <th><?php echo 'id:'.$zakaz['smslog'][0].'</br>Кол.sms:'.$zakaz['smslog'][1].'</br>Стоимость:'.$zakaz['smslog'][2].'</br>Баланс:'.$zakaz['smslog'][3]; ?></th>
                 <th><a orderstat="<?php
                     if ($zakaz['status'] == 2) {
                         echo '2';

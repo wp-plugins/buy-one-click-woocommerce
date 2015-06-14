@@ -4,7 +4,7 @@
   Plugin Name: Buy one click WooCommerce
   Plugin URI: http://www.zixn.ru/
   Description: Дополнение для Woocommerce - Купить в один клик. Добавляет кнопку "Заказать в один клик" в карточку товара.
-  Version: 1.1
+  Version: 1.2
   Author: Djon
   Author URI: http://zixn.ru
  */
@@ -30,11 +30,13 @@
 require_once (WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)) . '/inc/core-class.php');
 require_once (WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)) . '/inc/function-class.php');
 require_once (WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)) . '/inc/javascript-class.php');
+require_once (WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)) . '/inc/smsc-class.php');
 //require_once (WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)) . '/lib/smtp.php');
 
 if (class_exists('BuyCore')) {
     $bcore = new BuyCore();
     $bjava = new BuyJavaScript();
+//    $bsmsc = new BuySMSC();
     register_deactivation_hook(__FILE__, array($bcore, 'deactivationPlugin'));
 }
 

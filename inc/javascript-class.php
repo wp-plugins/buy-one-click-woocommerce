@@ -22,6 +22,8 @@ class BuyJavaScript {
         add_action('wp_ajax_nopriv_removeorder', array($this, 'ajaxRemoveOrderId'));
         add_action('wp_ajax_updatestatus', array($this, 'ajaxStatusOrderId'));
         add_action('wp_ajax_nopriv_updatestatus', array($this, 'ajaxStatusOrderId'));
+        add_action('wp_ajax_removeorderall', array($this, 'ajaxRemoveOrderAll'));
+        add_action('wp_ajax_nopriv_removeorderall', array($this, 'ajaxRemoveOrderAll'));
     }
 
     /**
@@ -46,14 +48,13 @@ class BuyJavaScript {
         $nametovar = $textjson['nametovar'];
         $pricetovar = $textjson['pricetovar'];
         $idtovar = $textjson['idtovar'];
-        $message = wp_specialchars_decode(esc_html($textjson['message']), ENT_QUOTES);
+        $dopinfo = wp_specialchars_decode(esc_html($textjson['message']), ENT_QUOTES);
         $linktovar = '<a href="' . get_the_permalink($idtovar) . '" target="_blank"><span class="glyphicon glyphicon-share"></span></a>';
         $infotovar_old = get_option('buyzakaz');
         $time = current_time('mysql');
         $status = '1'; //По умолчанию статус - новый
-        $infotovar_temp = array('time' => $time, 'idtovar' => $idtovar, 'txtname' => $txtname, 'txtphone' => $txtphone,
-            'txtemail' => $txtemail, 'nametovar' => $nametovar, 'pricetovar' => $pricetovar, 'message' => $message, 'status' => $status, 'linktovar' => $linktovar
-        );
+        $smslog = ''; //Лог смс
+
         if (isset(BuyCore::$buynotification['namemag'])) {
             $namemag = BuyCore::$buynotification['namemag'];
         } else {
@@ -94,9 +95,7 @@ class BuyJavaScript {
 
 
 
-        $infotovar_new = $infotovar_old;
-        array_push($infotovar_new, $infotovar_temp);
-        update_option('buyzakaz', $infotovar_new);
+
 
         $message = array(
             'time' => $time,
@@ -115,6 +114,33 @@ class BuyJavaScript {
         if (!empty(BuyCore::$buynotification['emailbbc'])) {
             BuyFunction::BuyEmailNotification(BuyCore::$buynotification['emailbbc'], BuyCore::$buynotification['namemag'], $message);
         }
+        //Отправка СМС
+        if (!empty(BuyCore::$buysmscoptions['enable_smsc'])) {
+            //echo BuyCore::$buysmscoptions['enable_smsc'];
+            $smsmessage = array(
+                'fon' => $txtphone,
+                'fio' => $txtname,
+                'txtemail' => $txtemail,
+                'dopinfo' => $dopiczakaz,
+                'price' => $pricetovar,
+                'nametov' => $nametovar
+            );
+            $sms=  new BuySMSC();
+            $smslog = $sms->send_sms(trim($smsmessage['fon']), BuyFunction::composeSms(BuyCore::$buysmscoptions['smshablon'], $smsmessage));
+            //$smslog = BuySMSC::send_sms('79082339278', 'test');
+            //$smslog = BuySMSC::send_sms(); 
+            ///Переписать функцию sms? помнить про static
+        }
+        //Журналирование
+        $infotovar_temp = array('time' => $time, 'idtovar' => $idtovar, 'txtname' => $txtname, 'txtphone' => $txtphone,
+            'txtemail' => $txtemail, 'nametovar' => $nametovar, 'pricetovar' => $pricetovar, 'message' => $dopinfo, 'status' => $status, 'linktovar' => $linktovar, 'smslog' => $smslog
+        );
+
+        $infotovar_new = $infotovar_old;
+        array_push($infotovar_new, $infotovar_temp);
+        update_option('buyzakaz', $infotovar_new);
+        //Конец журналирования
+
         $returnresult = array('result' => BuyCore::$buyoptions['success'], 'num' => $num, 'action' => $success_action);
         //$returnresult = array('result' => '123');
 //echo '<strong>' . BuyCore::$buyoptions['success'] . '</strong>';
@@ -133,6 +159,21 @@ class BuyJavaScript {
         $infotovar_new = $infotovar_old;
         update_option('buyzakaz', $infotovar_new);
         wp_die();
+    }
+
+    /**
+     * Функция удаляет всю таблицу заказов
+     * Данные отправляются из файла admin_order.js
+     */
+    public function ajaxRemoveOrderAll() {
+        $nonce = $_POST['nonce']; // Массив URL и NONCE
+
+        if (wp_verify_nonce($nonce['nonce'], 'superKey')) {
+            update_option('buyzakaz', array());
+            wp_die('ok');
+        } else {
+            wp_die('Ты хаккер?');
+        }
     }
 
     /**

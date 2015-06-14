@@ -63,6 +63,7 @@ class BuyCore {
      * @uses [success_action_close] - Время в мс до закрытия формы заказа
      * @uses [success_action_message] - Сообщение после заказа
      * @uses [success_action_redirect] - URL редиректа после заказа
+     * @uses [regex_fon] Регулярное выражение проверки телефона
      * 
      */
     static $buyoptions;
@@ -90,8 +91,24 @@ class BuyCore {
      * @uses [pricetovar] - Цена товара
      * @uses [message] - Сообщение от клиента
      * @uses [linktovar] - ссылка на товар вместе с тегами и подписью
+     * @uses [smslog] - Лог СМС
      */
     static $buyzakaz;
+    
+    
+    /**
+     * Опции СМСЦЕНТРА
+     * @uses [login] - логин пользователя
+     * @uses [password] - Пароль или MD5-хеш пароля в нижнем регистре  
+     * @uses [methodpost] - Использовать метод POST
+     * @uses [https] - использовать HTTPS протокол
+     * @uses [charset] -кодировка сообщения: utf-8, koi8-r или windows-1251 (по умолчанию)
+     * @uses [debug] - флаг отладки
+     * @uses [smtpfrom] - e-mail адрес отправителя
+     * @uses [smshablon] - SMS шаблон
+     * @uses [enable_smsc] - Вкючение СМС отправки на сайте
+     */
+    static $buysmscoptions;
 
     /**
      * Конструктор класса
@@ -102,6 +119,7 @@ class BuyCore {
         self::$buyoptions = get_option('buyoptions'); //Загрука опций из базы
         self::$buyzakaz = get_option('buyzakaz'); //Загрука опций из базы
         self::$buynotification = get_option('buynotification'); //Загрука опций из базы
+        self::$buysmscoptions = get_option('buysmscoptions'); //Получаем настройки смсцентра из опций
     }
 
     /**
@@ -133,6 +151,7 @@ class BuyCore {
         delete_option('buyoptions');
         delete_option('buyzakaz');
         delete_option('buynotification');
+        delete_option('buysmscoptions');
     }
 
     /**
@@ -142,6 +161,7 @@ class BuyCore {
         add_option('buyoptions', array()); //массив настроек плагина
         add_option('buyzakaz', array()); //массив Заказов через форму
         add_option('buynotification', array()); //Массив настроек уведомлений
+        add_option('buysmscoptions',  array());//Настройки smsc
     }
 
     /**
@@ -162,6 +182,8 @@ class BuyCore {
         wp_enqueue_style('buyonclickcss');
         wp_register_style('buybootstrapcss1', plugins_url() . '/' . self::PATCH_PLUGIN . '/' . 'bootstrap/css/bootstrap.css');
         wp_enqueue_style('buybootstrapcss1');
+        wp_register_style('buyadmincss2', plugins_url() . '/' . self::PATCH_PLUGIN . '/' . 'css/admin.css');
+        wp_enqueue_style('buyadmincss2');
     }
 
     /**
@@ -174,6 +196,10 @@ class BuyCore {
         wp_enqueue_script('buybootstrapjs1');
         wp_register_script('buyorder', plugins_url() . '/' . self::PATCH_PLUGIN . '/' . 'js/admin_order.js');
         wp_enqueue_script('buyorder');
+        wp_localize_script('buyorder', 'buyadminnonce', array( //Установка проверочного кода
+            'url' => admin_url(plugins_url() . '/' . self::PATCH_PLUGIN . '/' . 'js/admin_order.js'),
+            'nonce' => wp_create_nonce('superKey')
+        ));
     }
 
     /**

@@ -1,5 +1,25 @@
 
 jQuery(document).ready(function () {
+
+    //Удалить всю таблицу
+    jQuery('.removeallorder').on('click', function () {
+        jQuery.ajax({
+            type: "POST",
+            url: '/wp-admin/admin-ajax.php',
+            async: false,
+            data: {
+                action: 'removeorderall',
+                nonce: buyadminnonce // переменная содержащая массив с URL и NONCE
+            },
+            success: function (resp) {
+                // alert(resp);
+                if (resp == 'ok') {
+                    jQuery('table tbody').fadeOut();
+                }
+            }
+        });
+    });
+
 //Удалить элемент таблицы заказов
     jQuery('.removeorder').click(function () {
 
@@ -28,12 +48,12 @@ jQuery(document).ready(function () {
             var status = '2'
             jQuery(this).attr('2');
             jQuery(this).html('<span class="glyphicon glyphicon-ok-circle">ОК</span>');
-            
-            
+
+
         } else {
             var status = '1'
             jQuery(this).html('<span class="glyphicon glyphicon-ban-circle">НЕТ</span>');
-                        
+
         }
         var info = {
             id: id,
@@ -49,7 +69,7 @@ jQuery(document).ready(function () {
             }
 
         });
-        
+
     });
 
 

@@ -7,6 +7,26 @@
 class BuyFunction {
 
     /**
+     * Собирает тело сообщения SMS
+     * @param string $options Текст смс сообщения
+     * @param array $data Массив данных для замены
+     * 
+     */
+    static public function composeSms($options, $data) {
+        //Тэги замены
+        $template = array(
+            '%FIO%' => $data['fio'],
+            '%FON%' => $data['fon'],
+            '%EMAIL%' => $data['txtemail'],
+            '%DOPINFO%' => $data['dopinfo'],
+            '%TPRICE%' => $data['price'],
+            '%TNAME%' => $data['nametov']
+        );
+        $return_text = strtr($options, $template);
+        return $return_text;
+    }
+
+    /**
      * Дополнительное сообщение
      */
     static function viewBuyMessage() {
